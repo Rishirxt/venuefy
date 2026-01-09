@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Search, MapPin, ChevronRight, Star, Calendar, Menu, X } from 'lucide-react';
 import './styles.css';
 import SignupModal from './components/SignupModal';
+import LoginModal from './components/LoginModal';
 
 const LandingPage = () => {
   const [selectedCategory, setSelectedCategory] = useState('Movies');
@@ -10,6 +11,7 @@ const LandingPage = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [showSignup, setShowSignup] = useState(false);
+  const [showLogin, setShowLogin] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 50);
@@ -84,7 +86,7 @@ const LandingPage = () => {
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
             >
-              ShowBook
+              Venuefy
             </motion.h1>
             <div className="nav-links desktop-only">
               {categories.map(cat => (
@@ -137,46 +139,6 @@ const LandingPage = () => {
           </div>
         </div>
       </motion.nav>
-
-      {/* Mobile Menu */}
-      <AnimatePresence>
-        {mobileMenuOpen && (
-          <motion.div
-            className="mobile-menu"
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
-            exit={{ opacity: 0, height: 0 }}
-            transition={{ duration: 0.3 }}
-          >
-            {categories.map(cat => (
-              <motion.button
-                key={cat}
-                onClick={() => {
-                  setSelectedCategory(cat);
-                  setMobileMenuOpen(false);
-                }}
-                className={`mobile-menu-item ${selectedCategory === cat ? 'active' : ''}`}
-                whileTap={{ scale: 0.95 }}
-              >
-                {cat}
-              </motion.button>
-            ))}
-            <div style={{marginTop:12}}>
-              <motion.button
-                className="mobile-action-btn"
-                onClick={() => { setShowSignup(true); setMobileMenuOpen(false); }}
-                whileTap={{ scale: 0.95 }}
-              >
-                Sign up
-              </motion.button>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      {showSignup && (
-        <SignupModal onClose={() => setShowSignup(false)} onSuccess={() => setShowSignup(false)} />
-      )}
 
       {/* Hero Section */}
       <section className="hero-section">
@@ -275,8 +237,6 @@ const LandingPage = () => {
                   </motion.div>
                 </motion.div>
                 <div className="movie-info">
-
-          
                   <h4 className="movie-title">{movie.title}</h4>
                   <p className="movie-genre">{movie.genre}</p>
                   <p className="movie-votes">{movie.votes} votes</p>
@@ -379,6 +339,37 @@ const LandingPage = () => {
           </motion.div>
         </div>
       </section>
+
+      {/* Signup Modal */}
+      {showSignup && (
+        <SignupModal
+          onClose={() => setShowSignup(false)}
+          onSuccess={(data) => {
+            console.log('Signup successful:', data);
+            // Handle successful signup here
+            // You could set user state, show a success message, etc.
+          }}
+          onSwitchToLogin={() => {
+            setShowSignup(false);
+            setShowLogin(true);
+          }}
+        />
+      )}
+
+      {/* Login Modal */}
+      {showLogin && (
+        <LoginModal
+          onClose={() => setShowLogin(false)}
+          onSuccess={(data) => {
+            console.log('Login successful:', data);
+            // Handle successful login here
+          }}
+          onSwitchToSignup={() => {
+            setShowLogin(false);
+            setShowSignup(true);
+          }}
+        />
+      )}
     </div>
   );
 };
